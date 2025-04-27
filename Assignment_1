@@ -1,0 +1,48 @@
+section .data
+    msg db "Enter 5 64bit hex numbers", 0ah
+    l1 equ $ - msg
+    cnt1 db 5
+    cnt2 db 5
+
+section .bss
+    arr resb 85
+
+section .text
+    global _start
+
+_start:
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, l1
+    syscall
+
+    mov rbx, arr
+
+    input:
+        mov rax, 0
+        mov rdi, 0
+        mov rsi, rbx
+        mov rdx, 17
+        syscall
+        add rbx, 17
+        dec byte[cnt1]
+        jnz input
+
+    mov rbx, arr
+
+
+    output:
+        mov rax, 1
+        mov rdi, 1
+        mov rsi, rbx
+        mov rdx, 17
+        syscall
+        add rbx, 17
+        dec byte[cnt2]
+        jnz output
+
+    mov rax, 60
+    mov rdi, 0
+    syscall
