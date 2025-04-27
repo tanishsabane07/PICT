@@ -1,0 +1,67 @@
+
+; To Display the length of an inputted string
+
+
+section .data
+    msg1 db "Enter a string", 0xA
+    l1 equ $ - msg1
+    msg2 db "Length of the string is: "
+    l2 equ $ - msg2
+
+section .bss
+    string1 resb 100
+    length resb 2
+
+section .text
+global _start
+_start:
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg1
+    mov rdx, l1
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, string1
+    mov rdx, 100
+    syscall
+
+    dec rax     ; If space or enter is made during inputting string
+    mov rbx, rax
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg2
+    mov rdx, l2
+    syscall
+
+    mov rsi, length
+    mov rcx, 02h
+
+    hextoascii:
+        rol bl, 4
+        mov dl, bl
+        and dl, 0Fh
+        cmp dl, 09h
+        jbe copydigit
+        add dl, 07h
+
+    copydigit:
+        add dl, 30h
+        mov [rsi], dl
+        inc rsi
+        dec rcx
+        jnz hextoascii
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, length
+    mov rdx, 2
+    syscall
+
+    mov  rax , 60
+    mov  rdi , 00   
+    syscall 
+            
