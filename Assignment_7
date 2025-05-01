@@ -9,29 +9,21 @@
 section .data
     rmodemsg db 10, 'Processor is in Real Mode'
     rmsg_len: equ $-rmodemsg
-
     pmodemsg db 10, 'Processor is in Protected Mode'
     pmsg_len: equ $-pmodemsg
-
     gdtmsg db 10, 'GDT Contents are::'
     gmsg_len: equ $-gdtmsg
-
     ldtmsg db 10, 'LDT Contents are::'
     lmsg_len: equ $-ldtmsg
-
     idtmsg db 10, 'IDT Contents are::'
     imsg_len: equ $-idtmsg
-
     trmsg db 10, 'Task Register Contents are::'
     tmsg_len: equ $-trmsg
-
     mswmsg db 10, 'Machine Status Word::'
     mmsg_len: equ $-mswmsg
-
     colmsg db':'
     nwline db 10
-
-
+    
 section .bss
     gdt resd 1
     resw 1
@@ -41,7 +33,6 @@ section .bss
     tr resw 1
     cr0_data resd 1
     dnum_buff resb 04
-
 
 section .text
 global _start
@@ -62,6 +53,7 @@ nxt1:
     sldt [ldt]
     sidt [idt]
     str [tr]
+    
     print gdtmsg,gmsg_len         ;Global DT
     
     mov bx, [gdt+4]
@@ -76,12 +68,15 @@ nxt1:
     call print_num
     
     print ldtmsg,lmsg_len         ; Local DT
+    
     mov bx, [ldt]
     call print_num
     
     print idtmsg, imsg_len        ; Interrupt DT
+    
     mov bx, [idt+4]
     call print_num
+    
     mov bx, [idt+2]
     call print_num
     
@@ -95,7 +90,8 @@ nxt1:
     mov bx, [tr]
     call print_num
     
-    print mswmsg,mmsg_len
+    print mswmsg,mmsg_len         ;Machine Status Word
+    
     mov bx, [cr0_data+2]
     call print_num
     
@@ -131,4 +127,3 @@ print_num:
                                 ;if not zero jump to repeat
     print dnum_buff, 4          ;print the number from buffer
     ret
-
