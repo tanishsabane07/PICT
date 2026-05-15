@@ -1,2 +1,0 @@
-# PICT
-Assignments
