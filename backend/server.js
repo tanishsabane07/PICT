@@ -27,20 +27,19 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'E-Commerce API is running' });
 });
 
-// ---------- Serve Frontend in Production ----------
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the React build
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// ---------- Serve Frontend Build ----------
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+const frontendIndexPath = path.join(frontendDistPath, 'index.html');
 
-  // Handle React Router — send all non-API requests to index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/dist/index.html'));
-  });
-} else {
-  app.get('/', (req, res) => {
-    res.json({ message: 'API is running. Frontend is on port 5173.' });
-  });
-}
+app.use(express.static(frontendDistPath));
+
+app.get('*', (req, res, next) => {
+  if (req.originalUrl.startsWith('/api')) {
+    return next();
+  }
+
+  res.sendFile(frontendIndexPath);
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

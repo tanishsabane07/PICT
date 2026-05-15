@@ -1,81 +1,163 @@
-# EC2 Deployment Guide (MERN Stack)
+# Full-Stack E-Commerce Deployment on AWS EC2 (Ubuntu)
 
-This guide documents the steps taken to deploy this MERN stack application on an AWS EC2 instance running Ubuntu. It covers everything from connecting to the instance to keeping the backend running continuously using PM2.
-
-## Prerequisites
-* An AWS EC2 Instance running **Ubuntu 22.04 LTS or 24.04 LTS**.
-* Security Group configured to allow inbound traffic on **Port 22 (SSH)** and **Port 5000 (Custom TCP)**.
-* Your `.pem` key pair downloaded to your local machine.
+This project demonstrates deployment of a full-stack e-commerce application (React frontend + Node.js/Express backend + MongoDB) on an AWS EC2 instance. The backend serves both the API and the built frontend, so the app can run from a single public port.
 
 ---
 
-## Step 1: Connect to the EC2 Instance
+## Architecture
 
-ssh -i "your-key.pem" ubuntu@<your-ec2-public-ip-or-dns>
+```
+User -> Browser -> EC2 (Node/Express Server)
+											├── React Build (Frontend)
+											└── API (Backend)
+											↓
+									 MongoDB Database
+```
 
-## Step 2: Install Required Dependencies
-Important: Vite and its underlying bundlers require Node.js v20.19+ or v22+. We will install Node.js v22 to ensure the frontend builds correctly without CustomEvent or missing native binding errors.
+---
 
-Update the system and install Node.js v22, Git, and PM2:
+## Step 1: Launch EC2 Instance
 
-# 1. Update package lists
-sudo apt update && sudo apt upgrade -y
+- OS: Ubuntu
+- Configure Security Group:
+	- SSH (22) -> Your IP
+	- App Port (5000) -> 0.0.0.0/0
 
-# 2. Download and install Node.js v22
-curl -fsSL [https://deb.nodesource.com/setup_22.x](https://deb.nodesource.com/setup_22.x) | sudo -E bash -
-sudo apt install -y nodejs
+---
 
-# 3. Verify Node version (Should output v22.x.x)
-node -v
+## Step 2: Connect to EC2
 
-# 4. Install Git
-sudo apt install -y git
+```bash
+chmod 400 your-key.pem
+ssh -i your-key.pem ubuntu@<public-ip>
+```
 
-# 5. Install PM2 globally (Process Manager for Node.js)
+---
+
+## Step 3: Install Dependencies
+
+```bash
+sudo apt update
+sudo apt install nodejs npm git -y
+```
+
+Install PM2 (process manager):
+
+```bash
 sudo npm install -g pm2
+```
 
-## Step 3: Clone the Repository
+---
 
-git clone <your-github-repo-url>
-cd <your-repository-folder-name>
+## Step 4: Clone Project
 
-## Step 4: Build the Frontend
+```bash
+git clone <your-repo-url>
+cd <your-repo-folder>
+```
 
-# Navigate to the frontend directory
-cd frontend
+---
 
-# Clean cache and install dependencies fresh (prevents OS binary conflicts)
-npm cache clean --force
+## Step 5: Setup Backend (Express)
+
+```bash
+cd backend
 npm install
+```
 
-# Build the project (generates the /dist folder)
-npm run build
+Create `.env` file:
 
-## Step 5: Configure the Backend
-# Navigate back to the root, then into the backend
-cd ../backend
-
-# Install backend dependencies
-npm install
-
-# Create the environment variables file
+```bash
 nano .env
+```
 
-Paste your configuration into the .env file:
+Example:
 
-NODE_ENV=production
+```env
+MONGO_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/ecommerce?retryWrites=true&w=majority
 PORT=5000
-MONGO_URI=
+```
 
-## Step 6: Start the Server with PM2
-# Start the server
-pm2 start server.js --name "ecommerce-app"
+---
 
-# Configure PM2 to auto-restart the app if the EC2 instance reboots
-pm2 startup ubuntu
+## Step 6: Setup Frontend (React)
 
-(Run the specific command PM2 outputs to your console, it will look something like sudo env PATH=$PATH:/usr/bin...)
+```bash
+cd ../frontend
+npm install
+npm run build
+```
 
-Bash
-# Save the current PM2 process list
+This creates a `dist/` folder.
+
+---
+
+## Step 7: Run Application
+
+```bash
+cd ../backend
+pm2 start server.js
 pm2 save
+```
+
+Check status:
+
+```bash
+pm2 list
+```
+
+---
+
+## Step 8: Access Application
+
+Open in browser:
+
+```text
+http://<public-ip>:5000
+```
+
+---
+
+## Step 9: Remote Updates
+
+### Update Backend
+
+```bash
+cd backend
+git pull
+pm2 restart all
+```
+
+### Update Frontend
+
+```bash
+cd frontend
+git pull
+npm install
+npm run build
+pm2 restart all
+```
+
+---
+
+## Features
+
+- View products
+- Search and filter products
+- Add items to cart
+- Place orders
+- View order history
+
+---
+
+## Notes
+
+- The backend automatically serves the built frontend from `frontend/dist`.
+- The only required environment variables are `MONGO_URI` and `PORT`.
+- If you rebuild the frontend, run `npm run build` again and restart PM2 if needed.
+
+---
+
+## Conclusion
+
+The e-commerce application is successfully deployed on an AWS EC2 instance. The backend serves both API endpoints and the React frontend, making the app accessible from a single public URL.
