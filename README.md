@@ -41,6 +41,8 @@ sudo apt update
 sudo apt install nodejs npm git -y
 ```
 
+This setup works on Node 18+, so the default Ubuntu `nodejs` package is enough on a stock EC2 image that provides Node 18 or newer.
+
 Install PM2 (process manager):
 
 ```bash
