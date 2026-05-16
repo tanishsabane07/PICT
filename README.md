@@ -111,20 +111,7 @@ Joining_Date__c > TODAY()
 
 ---
 
-# Step 4: Create Lightning App
-
-Navigate to:
-
-Setup → App Manager → New Lightning App
-
-App Name:
-```text
-Employee Management App
-```
-
----
-
-# Step 5: Create Employee Tab
+# Step 4: Create Employee Tab
 
 Navigate to:
 
@@ -137,16 +124,35 @@ Save the tab.
 
 ---
 
-# Step 6: Add Tab to App
+# Step 5: Create Lightning App
 
 Navigate to:
 
-Setup → App Manager → Employee Management App → Edit
+Setup → App Manager → New Lightning App
+
+App Name:
+```text
+Employee Management App
+```
 
 Add:
-- Employees
+- Employees Tab
 
 Save the app.
+
+---
+
+# Step 6: Testing
+
+| Test Case | Expected Result |
+|---|---|
+| Name = "AB" | Validation Error |
+| Employee ID = -5 | Validation Error |
+| Duplicate Employee ID | Validation Error |
+| Salary = 5000 | Validation Error |
+| Invalid Email | Validation Error |
+| Empty Department | Validation Error |
+| Future Joining Date | Validation Error |
 
 ---
 
