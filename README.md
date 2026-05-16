@@ -1,165 +1,155 @@
-# Full-Stack E-Commerce Deployment on AWS EC2 (Ubuntu)
+# Employee Management Lightning App
 
-This project demonstrates deployment of a full-stack e-commerce application (React frontend + Node.js/Express backend + MongoDB) on an AWS EC2 instance. The backend serves both the API and the built frontend, so the app can run from a single public port.
-
----
-
-## Architecture
-
-```
-User -> Browser -> EC2 (Node/Express Server)
-											├── React Build (Frontend)
-											└── API (Backend)
-											↓
-									 MongoDB Database
-```
+## Aim
+To develop an Employee Management Lightning App in Salesforce with proper field validations.
 
 ---
 
-## Step 1: Launch EC2 Instance
+# Requirements
 
-- OS: Ubuntu
-- Configure Security Group:
-	- SSH (22) -> Your IP
-	- App Port (5000) -> 0.0.0.0/0
-
----
-
-## Step 2: Connect to EC2
-
-```bash
-chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@<public-ip>
-```
+The system validates:
+- Employee Name must contain at least 3 characters.
+- Employee ID must be unique and greater than 0.
+- Salary must be between 10,000 and 500,000.
+- Email must be valid.
+- Department must be selected.
+- Joining Date cannot be future date.
 
 ---
 
-## Step 3: Install Dependencies
+# Step 1: Create Employee Object
 
-```bash
-sudo apt update
-sudo apt install nodejs npm git -y
-```
+Navigate to:
 
-This setup works on Node 18+, so the default Ubuntu `nodejs` package is enough on a stock EC2 image that provides Node 18 or newer.
+Setup → Object Manager → Create → Custom Object
 
-Install PM2 (process manager):
+| Property | Value |
+|---|---|
+| Label | Employee |
+| Object Name | Employee |
+| Record Name | Employee Name |
 
-```bash
-sudo npm install -g pm2
-```
-
----
-
-## Step 4: Clone Project
-
-```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
-```
+Save the object.
 
 ---
 
-## Step 5: Setup Backend (Express)
+# Step 2: Create Fields
 
-```bash
-cd backend
-npm install
-```
+Navigate to:
 
-Create `.env` file:
+Object Manager → Employee → Fields & Relationships → New
 
-```bash
-nano .env
-```
+## Fields
 
-Example:
+| Field Name | Data Type |
+|---|---|
+| Employee ID | Number (Unique, Required) |
+| Salary | Currency |
+| Email | Email |
+| Department | Picklist |
+| Joining Date | Date |
 
-```env
-MONGO_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/ecommerce?retryWrites=true&w=majority
-PORT=5000
-```
-
----
-
-## Step 6: Setup Frontend (React)
-
-```bash
-cd ../frontend
-npm install
-npm run build
-```
-
-This creates a `dist/` folder.
-
----
-
-## Step 7: Run Application
-
-```bash
-cd ../backend
-pm2 start server.js
-pm2 save
-```
-
-Check status:
-
-```bash
-pm2 list
-```
-
----
-
-## Step 8: Access Application
-
-Open in browser:
+### Department Picklist Values
 
 ```text
-http://<public-ip>:5000
+HR
+Finance
+IT
+Marketing
+Sales
+Operations
 ```
 
 ---
 
-## Step 9: Remote Updates
+# Step 3: Create Validation Rules
 
-### Update Backend
+Navigate to:
 
-```bash
-cd backend
-git pull
-pm2 restart all
-```
+Object Manager → Employee → Validation Rules → New
 
-### Update Frontend
+## Employee Name Validation
 
-```bash
-cd frontend
-git pull
-npm install
-npm run build
-pm2 restart all
+```apex
+LEN(Name) < 3
 ```
 
 ---
 
-## Features
+## Employee ID Validation
 
-- View products
-- Search and filter products
-- Add items to cart
-- Place orders
-- View order history
+```apex
+Employee_ID__c <= 0
+```
 
 ---
 
-## Notes
+## Salary Validation
 
-- The backend automatically serves the built frontend from `frontend/dist`.
-- The only required environment variables are `MONGO_URI` and `PORT`.
-- If you rebuild the frontend, run `npm run build` again and restart PM2 if needed.
+```apex
+OR(
+Salary__c <= 10000,
+Salary__c >= 500000
+)
+```
 
 ---
 
-## Conclusion
+## Department Validation
 
-The e-commerce application is successfully deployed on an AWS EC2 instance. The backend serves both API endpoints and the React frontend, making the app accessible from a single public URL.
+```apex
+ISBLANK(TEXT(Department__c))
+```
+
+---
+
+## Joining Date Validation
+
+```apex
+Joining_Date__c > TODAY()
+```
+
+---
+
+# Step 4: Create Lightning App
+
+Navigate to:
+
+Setup → App Manager → New Lightning App
+
+App Name:
+```text
+Employee Management App
+```
+
+---
+
+# Step 5: Create Employee Tab
+
+Navigate to:
+
+Setup → Tabs → New → Custom Object Tabs
+
+Select:
+- Employee Object
+
+Save the tab.
+
+---
+
+# Step 6: Add Tab to App
+
+Navigate to:
+
+Setup → App Manager → Employee Management App → Edit
+
+Add:
+- Employees
+
+Save the app.
+
+---
+
+# Result
+
+Successfully developed an Employee Management Lightning App in Salesforce with proper validations for employee records.
