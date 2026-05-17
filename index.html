@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahata Sports Chatbot</title>
+    <style>
+        h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 15vh;
+            background-color: rgb(4, 140, 230);
+            color: aliceblue;
+            font: size 20px;
+            margin: 0;
+            margin-bottom: 3px;
+        }
+        .box {
+            height: 85vh;
+            background-color: burlywood;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .chatbox {
+
+            display: flex;
+            flex-direction:column;
+            /* justify-content: center; */
+            align-items: center;
+            background-color: aliceblue;
+            width: 35%;
+            height: 75%;
+            border: 2px solid black;
+
+        }
+        h2 {
+            border-bottom: 2px solid black;
+            width: 100%;
+            height: 10%;
+            /* margin: 0; */
+            float:inline-start;
+            text-align: center;
+            /* padding-top: 5px; */
+        }
+        .question {
+            display: flex;
+            width: 100%;
+            height: 10%;
+        }
+        #chat {
+            height: 80%;
+            padding: 8px;
+        }
+        .user-message{
+            background-color: lightblue;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            width: fit-content;
+            align-self: flex-end;
+        }
+
+        .bot-message{
+            background-color: lightgray;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+    <h1>Badminton Sports Complex</h1>
+    <div class="box">
+        <form class="chatbox" id="chatbox">
+            <h2>Chatbot</h2>
+            <div id="chat">
+
+            </div>
+            <div class="question">
+                <input style="width: 85%; padding: 2px; font-size: 17px;" type="text" placeholder="Enter question here" id="userInput">
+                <input style="background-color: blueviolet; color: white; width: 15%; font-size: 17px;" type="button" onclick="sendMessage()" value="Send">
+            </div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
