@@ -19,6 +19,8 @@ function sendMessage()
     chatbox.appendChild(botMessage);
 
     userinput.value = "";
+
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 function messageResponse(userText)
@@ -52,6 +54,10 @@ function messageResponse(userText)
     else if(userText.includes("contact") || userText.includes("mobile") || userText.includes("phone"))
     {
         return "Contact Number: 87383493843"
+    }
+    else if(userText.includes("fees") || userText.includes("cost") || userText.includes("price"))
+    {
+        return "300₹ / hour"
     }
     else
     {
